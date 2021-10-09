@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import time
-
-from gpiozero import OutputDevice
+import os
+#from gpiozero import OutputDevice
 
 
 ON_THRESHOLD = 65  # (degrees Celsius) Fan kicks on at this temperature.
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     if OFF_THRESHOLD >= ON_THRESHOLD:
         raise RuntimeError('OFF_THRESHOLD must be less than ON_THRESHOLD')
 
-    fan = OutputDevice(GPIO_PIN)
+#    fan = OutputDevice(GPIO_PIN)
 
     while True:
         temp = get_temp()
@@ -40,12 +40,14 @@ if __name__ == '__main__':
         # Start the fan if the temperature has reached the limit and the fan
         # isn't already running.
         # NOTE: `fan.value` returns 1 for "on" and 0 for "off"
-        if temp > ON_THRESHOLD and not fan.value:
-            fan.on()
-
+#        if temp > ON_THRESHOLD and not fan.value:
+        if temp > ON_THRESHOLD:
+#            fan.on()
+            os.system('gpioset gpiochip0 14=1')
         # Stop the fan if the fan is running and the temperature has dropped
         # to 10 degrees below the limit.
-        elif fan.value and temp < OFF_THRESHOLD:
-            fan.off()
-
+        elif temp < OFF_THRESHOLD:
+#        elif fan.value and temp < OFF_THRESHOLD:
+#            fan.off()
+            os.system('gpioset gpiochip0 14=0')
         time.sleep(SLEEP_INTERVAL)
